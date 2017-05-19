@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     margin: 10,
-    paddingTop: 10
+    marginTop: 10
   },
   ListView: {
     flex: 2
