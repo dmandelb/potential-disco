@@ -36,7 +36,12 @@ export default class PotentialDisco extends Component {
 
   renderImagePage(){
     return(
+      <View style={styles.container}>
+        <Text style={styles.titleText}>
+          PotentialDisco
+        </Text>
       <ImagePage imageInfo={this.state.oneImage} goBack={this.handleBack}/>
+      </View>
       )
   }
 

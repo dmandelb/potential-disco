@@ -9,7 +9,20 @@ import {
 export default class ImagePage extends Component {
   render() {
     return(
-      <Image style={{width: this.props.imageInfo, height: }}>
+      <View>
+        <Image source={{uri: this.props.imageInfo.webformatURL}} style={{width: this.props.imageInfo.webformatWidth, height: this.props.imageInfo.webformatHeight}} resizeMode="contain"/>
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <Text>
+            By: {this.props.imageInfo.user}
+          </Text>
+          <Text>
+            Tags: {this.props.imageInfo.tags}
+          </Text>
+          <Text>
+            Resolution: {this.props.imageInfo.webformatWidth}x{this.props.imageInfo.webformatHeight}
+          </Text>
+        </View>
+      </View>
       )
   }
 }
