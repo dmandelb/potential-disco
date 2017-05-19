@@ -11,6 +11,7 @@ import {
   Text,
   View
 } from 'react-native';
+import SearchForm from './form'
 
 export default class PotentialDisco extends Component {
   render() {
@@ -26,6 +27,7 @@ export default class PotentialDisco extends Component {
           Press Cmd+R to reload,{'\n'}
           Cmd+D or shake for dev menu
         </Text>
+        <SearchForm/>
       </View>
     );
   }
