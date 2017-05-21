@@ -19,6 +19,10 @@ import Form from 'react-native-form'
 var SearchForm = require('./form');
 var ImagePage = require('./image_page')
 
+const contentSource = 'https://pixabay.com/api/'
+const apiKey = '5402129-904e24af145d03ab5e66dce4e'
+const perPage = 200
+
 export default class PotentialDisco extends Component {
   constructor(){
     super()
@@ -29,9 +33,10 @@ export default class PotentialDisco extends Component {
       }),
       oneImage: null
     }
-    this.sendSearchRequest = this.sendSearchRequest.bind(this)
+    this.coordinateRequest = this.coordinateRequest.bind(this)
     this.renderImagePreview = this.renderImagePreview.bind(this)
     this.handleBack = this.handleBack.bind(this)
+    this.sendLoopedRequest = this.sendLoopedRequest.bind(this)
   }
 
   renderImagePage(){
@@ -61,20 +66,40 @@ export default class PotentialDisco extends Component {
       )
   }
 
-  sendSearchRequest() {
+  coordinateRequest() {
     var searchTerms = this.refs.searchForm.refs.form.getValues().searchTerm.replace(/ /g,"+")
-    fetch('https://pixabay.com/api/?key=5402129-904e24af145d03ab5e66dce4e&q=' + searchTerms).then((response) => response.json())
+    fetch(contentSource + '?key=' + apiKey + '&per_page=' + perPage + '&q=' + searchTerms).then((response) => response.json())
     .then((responseData) => {
-      if (responseData.hits) {
+      if (parseInt(responseData.hits.length) > 0) {
+        var searchResults = responseData.hits
+        var totalResults = responseData.totalHits
+        var pageNumber = 2
+        while(pageNumber * perPage <= totalResults){
+          var newResults = this.sendLoopedRequest(pageNumber, searchTerms)
+          if (newResults) {
+            searchResults = searchResults + newResults
+          };
+          pageNumber ++
+        }
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.hits),
+          dataSource: this.state.dataSource.cloneWithRows(searchResults),
           results: true
         })
       }else{
-        Alert.alert()
+        Alert.alert("No results found")
       };
     })
   }
+
+  sendLoopedRequest(pageValue, searchTerms){
+    var moreResults
+    fetch(contentSource + '?key=' + apiKey + '&per_page=' + perPage + '&page=' + pageValue + '&q=' + searchTerms ).then((response) => response.json())
+    .then((responseData) => {
+      if (parseInt(responseData.hits.length) > 0) {
+        return responseData.hits
+      };
+    })
+  } 
 
   renderForm() {
     return(
@@ -82,7 +107,7 @@ export default class PotentialDisco extends Component {
           <Text style={styles.titleText}>
             PotentialDisco
           </Text>
-          <SearchForm ref="searchForm" sendRequest={this.sendSearchRequest}/>
+          <SearchForm ref="searchForm" sendRequest={this.coordinateRequest}/>
         </View>
       )
   }
